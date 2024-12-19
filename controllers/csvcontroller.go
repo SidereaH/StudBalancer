@@ -16,11 +16,11 @@ type UserFromCsv struct {
 	FirstName string
 	LastName  string
 	Email     string
-	Group     string
+	Group     models.Group
 }
 
 // принимает файл в бинарном формате и парсит его жоск
-func ProcessCSVEndpoint(context *gin.Context) {
+func RegisterUserByCSV(context *gin.Context) {
 	// Извлекаем бинарный файл из тела запроса
 	file, _, err := context.Request.FormFile("file")
 	if err != nil {
@@ -50,7 +50,7 @@ func ProcessCSVEndpoint(context *gin.Context) {
 		if existsByEmail(record) == false || existsByPhone(record) == false {
 			//регаем если нет типа
 			var user models.User
-			if err := user.FillUserParams(record); err != nil {
+			if err := user.CreateUserWithoutDistrib(record); err != nil {
 				context.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to load fileds to user: %s  \n from file: %s ", err.Error(), record)})
 				continue
 			}
@@ -60,11 +60,17 @@ func ProcessCSVEndpoint(context *gin.Context) {
 				context.Abort()
 				continue
 			}
+			var currentGroup models.Group
+			err := database.Instance.Where("id = ?", 1).Find(&currentGroup).Error
+			if err != nil {
+				context.JSON(http.StatusInternalServerError, gin.H{"error": record.Error.Error()})
+				continue
+			}
 			resposeUser := UserFromCsv{
 				FirstName: user.FirstName,
 				LastName:  user.SecondName,
 				Email:     user.Email,
-				Group:     user.Group,
+				Group:     currentGroup,
 			}
 			usersFromCsv = append(usersFromCsv, resposeUser)
 		}

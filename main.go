@@ -25,10 +25,14 @@ func initRouter() *gin.Engine {
 		api.POST("/token", controllers.GenerateToken)
 		api.POST("/user/register", controllers.RegisterUser)
 		api.POST("/token/refresh", controllers.RefreshToken)
-		api.POST("/upload/csv-stud", controllers.ProcessCSVEndpoint) // из файла регаем студентов
+		api.POST("/upload/csv-stud", controllers.RegisterUserByCSV) // из файла регаем студентов
 		secured := api.Group("/secured").Use(middlewares.Auth())
 		{
 			secured.GET("/ping", controllers.Ping)
+		}
+		create := api.Group("/create") //.Use(middlewares.Auth())
+		{
+			create.POST("/groups", controllers.CreateGroups)
 		}
 	}
 	return router

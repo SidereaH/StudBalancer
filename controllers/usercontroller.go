@@ -29,7 +29,14 @@ func RegisterUser(context *gin.Context) {
 		context.Abort()
 		return
 	}
-
+	group, err := database.GetGroupByID(user.GroupID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		context.Abort()
+		return
+	}
+	if group == nil {
+	}
 	context.JSON(http.StatusCreated, gin.H{
 		//"userId": user.ID,
 		"email":       user.Email,
@@ -37,7 +44,5 @@ func RegisterUser(context *gin.Context) {
 		"second_name": user.SecondName,
 		"first_name":  user.FirstName,
 		"middle_name": user.MiddleName,
-		"group":       user.Group,
-		"first_spec":  user.FirstSpec.Name,
-		"second_spec": user.FirstSpec.Name})
+		"group":       group})
 }

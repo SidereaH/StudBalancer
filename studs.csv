@@ -1,6 +1,6 @@
-﻿SecondName;FirstName;MiddleName;Group;Phone;Email;FirstSpecialization;SecondSpecialization;isDebtor
-Иванов;Иван;Иванович;ИСП9-Kh21;89882228822;5@gmail.com;Java;Go;true
-Сериков;Иван;Алексанрович;ИСП11-Kh11;89783334455;4@gmail.com;Frontend;Backend;false
-Иванов;Иван;Иванович;ИСП9-Kh23;89901232323;3@gmail.com;DataScience;.NET;true
-Фудулей;Мария;Сергеевна;ИСП9-Kh22;89882228821;2@gmail.com;Java;Go;false
-Гагарина;Валерия;Викторовна;ИСП9-Kh23;89889998787;1@gmail.com;.NET;Backend;false
+﻿SecondName;FirstName;MiddleName;Phone;Email;isDebtor
+Иванов;Иван;Иванович;89882228822;5@gmail.com;true
+Сериков;Иван;Алексанрович;89783334455;4@gmail.com;false
+Иванов;Иван;Иванович;89901232323;3@gmail.com;true
+Фудулей;Мария;Сергеевна;89882228821;2@gmail.com;false
+Гагарина;Валерия;Викторовна;89889998787;1@gmail.com;false

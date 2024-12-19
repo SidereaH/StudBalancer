@@ -1,9 +1,12 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type Group struct {
 	gorm.Model
-	GroupName string `json:"group_name" `
-	User      User   `json:"email" ` // Электронная почта
+	GroupName      string `json:"group_name" gorm:"unique"`
+	SpecialityName string `json:"speciality_name" gorm:"unique"`
+	MaxSize        int    `json:"max_size" `
 }

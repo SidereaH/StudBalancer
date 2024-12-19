@@ -21,35 +21,7 @@ func Connect(connectionString string) {
 }
 
 func Migrate() {
-	Instance.AutoMigrate(&models.User{}, &models.Spec{}, &models.Group{})
-	InitSpecs(Instance)
+	Instance.AutoMigrate(&models.User{}, &models.Group{})
+	InitGroups(Instance)
 	log.Println("Database Migration Completed!")
-}
-
-func InitSpecs(db *gorm.DB) {
-	specs := []models.Spec{
-		{
-			Name: "Java",
-		},
-		{
-			Name: "Backend",
-		},
-		{
-			Name: "Frontend",
-		},
-		{
-			Name: "Data Engineer",
-		},
-		{
-			Name: ".NET",
-		},
-	}
-	for _, spec := range specs {
-		// Используем FirstOrCreate для предотвращения дублирования записей
-		result := db.FirstOrCreate(&spec, models.Spec{Name: spec.Name})
-		if result.Error != nil {
-			log.Println("Ошибка при создании спецификации:", result.Error)
-		}
-	}
-
 }
