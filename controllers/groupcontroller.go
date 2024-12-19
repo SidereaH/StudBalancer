@@ -60,3 +60,19 @@ func DeleteGroup(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Successfully deleted group with id = %d", id)})
 }
+func GetGroupById(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		c.Abort()
+		return
+	}
+	group, err := database.GetGroupByID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"group_name": group.GroupName, "group_size": group.MaxSize, "group_spec": group.SpecialityName})
+}

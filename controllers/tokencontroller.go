@@ -44,7 +44,7 @@ func GenerateToken(context *gin.Context) {
 		context.Abort()
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"token": tokenString, "refresh_token": refreshTokenString})
+	context.JSON(http.StatusOK, gin.H{"accessToken": tokenString, "refreshToken": refreshTokenString, "email": user.Email})
 }
 
 func RefreshToken(context *gin.Context) {

@@ -1,7 +1,6 @@
 package database
 
 import (
-	"errors"
 	"log"
 	"stud-distributor/models"
 )
@@ -29,8 +28,42 @@ func ExistsByPhone(record []string) bool {
 func GetUsers() ([]models.User, error) {
 	var users []models.User
 	if result := Instance.Find(&users); result.Error != nil {
-		errors.New("Failed to fetch users")
+
 		return nil, result.Error
 	}
+	for _, user := range users {
+		group, err := GetGroupByID(user.GroupID)
+		if err != nil {
+			return nil, err
+		}
+		user.Group = group
+		log.Println(user)
+	}
+
 	return users, nil
+}
+func GetUserByID(id string) (models.User, error) {
+	var user models.User
+	if result := Instance.First(&user, "id = ?", id); result.Error != nil {
+		return models.User{}, result.Error
+	}
+	group, err := GetGroupByID(user.GroupID)
+	if err != nil {
+		return models.User{}, err
+	}
+	user.Group = group
+	return user, nil
+}
+func GetUserByEmail(email string) (models.User, error) {
+	var user models.User
+	if result := Instance.First(&user, "email = ?", email); result.Error != nil {
+		return models.User{}, result.Error
+
+	}
+	group, err := GetGroupByID(user.GroupID)
+	if err != nil {
+		return models.User{}, err
+	}
+	user.Group = group
+	return user, nil
 }

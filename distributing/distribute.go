@@ -2,6 +2,7 @@ package distributing
 
 import (
 	"errors"
+	"fmt"
 	"stud-distributor/database"
 	"stud-distributor/models"
 )
@@ -33,6 +34,11 @@ func DistribureUserBySpecs(user *models.User, specs []string) error {
 			continue
 		}
 		user.GroupID = id
+		// Save the changes
+		if err := database.Instance.Save(&user).Error; err != nil {
+			fmt.Println("Error updating user:", err)
+			return nil
+		}
 		return nil
 	}
 	return err

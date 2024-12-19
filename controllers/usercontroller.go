@@ -47,7 +47,7 @@ func RegisterUser(context *gin.Context) {
 }
 
 type DistributeRequest struct {
-	UserID         uint   `json:"user_id"`
+	UserEmail      string `json:"user_mail"`
 	FirstPriority  string `json:"first_priority"`
 	SecondPriority string `json:"second_priority"`
 }
@@ -62,7 +62,7 @@ func DistributeUser(context *gin.Context) {
 	}
 
 	//check if bro exists
-	record := database.Instance.Where("id = ?", request.UserID).First(&user)
+	record := database.Instance.Where("email = ?", request.UserEmail).First(&user)
 	if record.Error != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": record.Error.Error()})
 		context.Abort()
@@ -98,4 +98,35 @@ func GetUsers(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"users": users})
+}
+func GetUser(c *gin.Context) {
+	id := c.Param("id")
+	user, err := database.GetUserByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+type EmailRequest struct {
+	Email string `json:"user_email"`
+}
+
+func GetUserByEmail(c *gin.Context) {
+	var request EmailRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	user, err := database.GetUserByEmail(request.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"user": user})
+
 }

@@ -15,7 +15,7 @@ type User struct {
 	Phone      string `json:"phone" gorm:"unique"`
 	IsDebtor   bool   `json:"is_debtor"`
 	Password   string `json:"password"`
-	Role       string `json:"role" gorm:"default:user"`
+	Role       string `json:"role" gorm:"default:ROLE_USER"`
 	//Внешние ключики
 	Group Group `gorm:"foreignKey:GroupID;references:ID"`
 }

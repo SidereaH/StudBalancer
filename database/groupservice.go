@@ -48,11 +48,11 @@ func InitGroups(db *gorm.DB) {
 	*/
 
 }
-func GetGroupByID(id uint) ([]models.Group, error) {
-	var group []models.Group
+func GetGroupByID(id uint) (models.Group, error) {
+	var group models.Group
 	err := Instance.Where("id = ?", id).Find(&group).Error
 	if err != nil {
-		return nil, err
+		return models.Group{}, err
 	}
 	return group, nil
 }
