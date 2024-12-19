@@ -1,6 +1,7 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"gorm.io/gorm"
 	"log"
@@ -37,7 +38,7 @@ func InitGroups(db *gorm.DB) {
 			SpecialityName: group.SpecialityName,
 			MaxSize:        group.MaxSize})
 		if result.Error != nil {
-			log.Println("Ошибка при создании спецификации:", result.Error)
+			log.Println("Error while creating group", result.Error)
 		}
 	}
 	/*
@@ -55,15 +56,22 @@ func GetGroupByID(id uint) ([]models.Group, error) {
 	}
 	return group, nil
 }
-func GetGroupsBySpecialityName(specialityName string) ([]models.Group, error) {
+
+// возврщает первую свободную группу по специальности
+func GetGroupIdBySpecialityName(specialityName string) (uint, error) {
 	var groups []models.Group
 	err := Instance.Where("speciality_name = ?", specialityName).Find(&groups).Error
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
-	return groups, nil
+	for _, group := range groups {
+		if isGroupIsFullByGroupID(group.ID) == false {
+			return group.ID, nil
+		}
+	}
+	return 0, fmt.Errorf("All groups is full now")
 }
-func IsGroupIsFullByGroupID(groupID uint) bool {
+func isGroupIsFullByGroupID(groupID uint) bool {
 	var group models.Group
 	Instance.First(&group, "ID = ?", groupID)
 	groupSize := group.MaxSize
@@ -83,4 +91,22 @@ func GetCountOfUsersByGroupID(groupID uint) int {
 		return 0
 	}
 	return int(count)
+}
+func GetGroups() ([]models.Group, error) {
+	var groups []models.Group
+	if result := Instance.Find(&groups); result.Error != nil {
+		errors.New("Failed to fetch groups")
+		return nil, result.Error
+	}
+	return groups, nil
+}
+func DeleteGroupByID(id int) (bool, error) {
+	result := Instance.Delete(&models.Group{}, id)
+	if result.Error != nil {
+		return false, fmt.Errorf("Failed to delete group with ID %d: %w", id, result.Error)
+	}
+	if result.RowsAffected == 0 {
+		return false, fmt.Errorf("No group found with ID %d", id)
+	}
+	return true, nil
 }

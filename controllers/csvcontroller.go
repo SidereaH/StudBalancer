@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
-	"log"
 	"net/http"
 	"stud-distributor/database"
+	"stud-distributor/distributing"
 	"stud-distributor/models"
 )
 
@@ -19,7 +19,6 @@ type UserFromCsv struct {
 	Group     models.Group
 }
 
-// принимает файл в бинарном формате и парсит его жоск
 func RegisterUserByCSV(context *gin.Context) {
 	// Извлекаем бинарный файл из тела запроса
 	file, _, err := context.Request.FormFile("file")
@@ -47,10 +46,10 @@ func RegisterUserByCSV(context *gin.Context) {
 		if i == 0 {
 			continue
 		}
-		if existsByEmail(record) == false || existsByPhone(record) == false {
+		if database.ExistsByEmail(record) == false || database.ExistsByPhone(record) == false {
 			//регаем если нет типа
 			var user models.User
-			if err := user.CreateUserWithoutDistrib(record); err != nil {
+			if err := distributing.CreateUserWithoutDistrib(&user, record); err != nil {
 				context.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to load fileds to user: %s  \n from file: %s ", err.Error(), record)})
 				continue
 			}
@@ -97,25 +96,4 @@ func parseCSV(reader io.Reader) ([][]string, error) {
 	}
 
 	return records, nil
-}
-
-func existsByEmail(record []string) bool {
-	var user models.User
-	recording := database.Instance.Where("email = ?", record[5]).First(&user)
-	if recording.Error != nil {
-		//не найден - найс, регаем
-		log.Println(recording.Error)
-		return false
-	}
-	return true
-}
-func existsByPhone(record []string) bool {
-	var user models.User
-	recording := database.Instance.Where("phone = ?", record[4]).First(&user)
-	if recording.Error != nil {
-		//не найден - найс, регаем
-		log.Println(recording.Error)
-		return false
-	}
-	return true
 }

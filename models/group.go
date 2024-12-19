@@ -6,7 +6,7 @@ import (
 
 type Group struct {
 	gorm.Model
-	GroupName      string `json:"group_name" gorm:"unique"`
-	SpecialityName string `json:"speciality_name" gorm:"unique"`
-	MaxSize        int    `json:"max_size" `
+	GroupName      string `json:"group_name" gorm:"unique;not null"`
+	SpecialityName string `json:"speciality_name" gorm:"unique;not null"`
+	MaxSize        int    `json:"max_size;default:30" `
 }

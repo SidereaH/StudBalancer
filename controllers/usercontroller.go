@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"stud-distributor/database"
+	"stud-distributor/distributing"
 	"stud-distributor/models"
 
 	"github.com/gin-gonic/gin"
@@ -35,8 +36,6 @@ func RegisterUser(context *gin.Context) {
 		context.Abort()
 		return
 	}
-	if group == nil {
-	}
 	context.JSON(http.StatusCreated, gin.H{
 		//"userId": user.ID,
 		"email":       user.Email,
@@ -45,4 +44,58 @@ func RegisterUser(context *gin.Context) {
 		"first_name":  user.FirstName,
 		"middle_name": user.MiddleName,
 		"group":       group})
+}
+
+type DistributeRequest struct {
+	UserID         uint   `json:"user_id"`
+	FirstPriority  string `json:"first_priority"`
+	SecondPriority string `json:"second_priority"`
+}
+
+func DistributeUser(context *gin.Context) {
+	var request DistributeRequest
+	var user models.User
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		context.Abort()
+		return
+	}
+
+	//check if bro exists
+	record := database.Instance.Where("id = ?", request.UserID).First(&user)
+	if record.Error != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": record.Error.Error()})
+		context.Abort()
+		return
+	}
+	specs := []string{
+		request.FirstPriority,
+		request.SecondPriority,
+	}
+	if err := distributing.DistribureUserBySpecs(&user, specs); err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		context.Abort()
+		return
+	}
+	group, err := database.GetGroupByID(user.GroupID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		context.Abort()
+		return
+	}
+	context.JSON(http.StatusAccepted, gin.H{"email": user.Email,
+		"phone":       user.Phone,
+		"second_name": user.SecondName,
+		"first_name":  user.FirstName,
+		"middle_name": user.MiddleName,
+		"group":       group})
+}
+func GetUsers(c *gin.Context) {
+	users, err := database.GetUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"users": users})
 }

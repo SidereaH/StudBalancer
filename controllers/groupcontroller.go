@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"stud-distributor/database"
 	"stud-distributor/models"
 )
@@ -32,4 +34,29 @@ func CreateGroups(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Groups created successfully"})
+}
+func GetGroups(c *gin.Context) {
+	groups, err := database.GetGroups()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"groups": groups})
+}
+func DeleteGroup(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr) // Преобразуем строку в int
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	_, err = database.DeleteGroupByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("Successfully deleted group with id = %d", id)})
 }
