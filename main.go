@@ -34,7 +34,7 @@ func initRouter() *gin.Engine {
 			auth.POST("/token/refresh", controllers.RefreshToken)
 
 		}
-		api.POST("/user/register", controllers.RegisterUser)
+		api.POST("/register/user", controllers.RegisterUser)
 		api.POST("/register/csv-stud", controllers.RegisterUserByCSV) // из файла регаем студентов без выборов специальностей - studs_jinfo
 		//api.POST("/update/student", controllers.)
 		api.POST("/distribute", controllers.DistributeUser) //отправляем бротиша в группу по его хотению

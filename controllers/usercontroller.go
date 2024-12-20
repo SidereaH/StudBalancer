@@ -127,6 +127,6 @@ func GetUserByEmail(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	c.JSON(http.StatusOK, gin.H{"email": user.Email, "first_name": user.FirstName, "middle_name": user.MiddleName, "second_name": user.SecondName, "speciality_name": user.Group.SpecialityName, "group_name": user.Group.GroupName})
 
 }
