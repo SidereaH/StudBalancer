@@ -30,6 +30,16 @@ func InitGroups(db *gorm.DB) {
 			SpecialityName: "Frontend",
 			MaxSize:        30,
 		},
+		{
+			GroupName:      "ИСП9-Kh31",
+			SpecialityName: ".NET",
+			MaxSize:        30,
+		},
+		{
+			GroupName:      "ИСП9-Kh34",
+			SpecialityName: "Data Engineer",
+			MaxSize:        30,
+		},
 	}
 	for _, group := range groups {
 		// Используем FirstOrCreate для предотвращения дублирования записей

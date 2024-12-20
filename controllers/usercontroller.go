@@ -84,11 +84,13 @@ func DistributeUser(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusAccepted, gin.H{"email": user.Email,
-		"phone":       user.Phone,
-		"second_name": user.SecondName,
-		"first_name":  user.FirstName,
-		"middle_name": user.MiddleName,
-		"group":       group})
+		"phone":           user.Phone,
+		"second_name":     user.SecondName,
+		"first_name":      user.FirstName,
+		"middle_name":     user.MiddleName,
+		"group_name":      group.GroupName,
+		"speciality_name": group.SpecialityName,
+		"role":            user.Role})
 }
 func GetUsers(c *gin.Context) {
 	users, err := database.GetUsers()
@@ -127,6 +129,14 @@ func GetUserByEmail(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"email": user.Email, "first_name": user.FirstName, "middle_name": user.MiddleName, "second_name": user.SecondName, "speciality_name": user.Group.SpecialityName, "group_name": user.Group.GroupName})
+	c.JSON(http.StatusOK, gin.H{
+		"email":           user.Email,
+		"phone":           user.Phone,
+		"first_name":      user.FirstName,
+		"middle_name":     user.MiddleName,
+		"second_name":     user.SecondName,
+		"speciality_name": user.Group.SpecialityName,
+		"group_name":      user.Group.GroupName,
+		"role":            user.Role})
 
 }
