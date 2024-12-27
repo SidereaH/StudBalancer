@@ -28,6 +28,9 @@ func CreateUserWithoutDistrib(user *models.User, row []string) error {
 
 func DistribureUserBySpecs(user *models.User, specs []string) error {
 	var err error
+	if user.IsDebtor == true {
+		return errors.New("is debtor")
+	}
 	for _, spec := range specs {
 		id, err := database.GetGroupIdBySpecialityName(spec)
 		if err != nil {
