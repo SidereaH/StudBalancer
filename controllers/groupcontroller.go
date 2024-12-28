@@ -76,3 +76,12 @@ func GetGroupById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"group_name": group.GroupName, "group_size": group.MaxSize, "group_spec": group.SpecialityName})
 }
+func GetSpecialityNames(c *gin.Context) {
+	specialities, err := database.GetUniqSpecialities()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"specialities": specialities})
+}

@@ -48,17 +48,17 @@ func initRouter() *gin.Engine {
 		{
 			create.POST("/groups", controllers.CreateGroups)
 		}
-		get := api.Group("/get")
+		get := api.Group("/get") //.Use(middlewares.Auth())
 		{
 			get.GET("/groups", controllers.GetGroups)
 			get.GET("/users", controllers.GetUsers)
 			get.GET("/group/:id", controllers.GetGroupById)
+			get.GET("/specialities", controllers.GetSpecialityNames)
 		}
 		delete := api.Group("/delete")
 		{
-			delete.DELETE("/groups/:id", controllers.DeleteGroup)
+			delete.DELETE("/groups/:id", controllers.DeleteGroup) //.Use(middlewares.Auth())
 		}
-
 	}
 	return router
 }

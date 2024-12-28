@@ -120,3 +120,12 @@ func DeleteGroupByID(id int) (bool, error) {
 	}
 	return true, nil
 }
+func GetUniqSpecialities() ([]string, error) {
+
+	var specialityNames []string
+	result := Instance.Model(&models.Group{}).Where("speciality_name != ?", "Не определился").Distinct("speciality_name").Pluck("speciality_name", &specialityNames)
+	if result.Error != nil {
+		return nil, fmt.Errorf("Error fetching speciality names:", result.Error)
+	}
+	return specialityNames, nil
+}
